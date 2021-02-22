@@ -66,14 +66,16 @@ class AddonPreferences(bpy.types.AddonPreferences):
                     break
 
             for kmi_con in km.keymap_items:
-                if kmi_add.idname == kmi_con.idname:
-                    if kmi_add.name == kmi_con.name:
-                        get_kmi_l.append((km,kmi_con))
+                if (
+                    kmi_add.idname == kmi_con.idname
+                    and kmi_add.name == kmi_con.name
+                ):
+                    get_kmi_l.append((km,kmi_con))
 
         get_kmi_l = sorted(set(get_kmi_l), key=get_kmi_l.index)
 
         for km, kmi in get_kmi_l:
-            if not km.name == old_km_name:
+            if km.name != old_km_name:
                 col.label(text=str(km.name),icon="DOT")
             col.context_pointer_set("keymap", km)
             rna_keymap_ui.draw_kmi([], kc, km, kmi, col, 0)
@@ -88,8 +90,7 @@ addon_keymaps = []
 def get_addon_preferences():
     ''' quick wrapper for referencing addon preferences '''
     user_preferences = bpy.context.user_preferences
-    addon_prefs = user_preferences.addons[__name__].preferences
-    return addon_prefs
+    return user_preferences.addons[__name__].preferences
 
 
 def get_hotkey_entry_item(km, kmi_name, kmi_value):
